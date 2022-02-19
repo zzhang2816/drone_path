@@ -10,8 +10,8 @@ def random_walk():
     p2 = np.load("p2.npy")
     p3 = np.load("p3.npy")
     for p in [p1,p2,p3]:
-        p[:,0:2]=(p[:,0:2]-3)/2
-        p[:,-1]=p[:,-1]/2
+        p[:,0:2]=(p[:,0:2]-3)/4*1.3
+        p[:,-1]=p[:,-1]/1.5
     print("min distance btw 1-2",get_dist(p1,p2))
     print("min distance btw 1-3",get_dist(p1,p3))
     print("min distance btw 2-3",get_dist(p2,p3))
@@ -45,8 +45,8 @@ lines = [ax.plot([], [], [])[0] for _ in walks]
 # ax.set(xlim3d=(0, 6), xlabel='X')
 # ax.set(ylim3d=(0, 6), ylabel='Y')
 # ax.set(zlim3d=(0, 6), zlabel='Z')
-ax.set(xlim3d=(-3, 3), xlabel='X')
-ax.set(ylim3d=(-3, 3), ylabel='Y')
+ax.set(xlim3d=(-1.3, 1.3), xlabel='X')
+ax.set(ylim3d=(-1.3, 1.3), ylabel='Y')
 ax.set(zlim3d=(0, 2), zlabel='Z')
 
 
