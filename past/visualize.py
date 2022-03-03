@@ -10,8 +10,7 @@ def random_walk():
     p2 = np.load("p2.npy")
     p3 = np.load("p3.npy")
     for p in [p1,p2,p3]:
-        p[:,0:2]=(p[:,0:2]-3)/4*1.3
-        p[:,-1]=p[:,-1]/1.5
+        p[:,0:2]=(p[:,0:2]-2)/3
     print("min distance btw 1-2",get_dist(p1,p2))
     print("min distance btw 1-3",get_dist(p1,p3))
     print("min distance btw 2-3",get_dist(p2,p3))
@@ -20,7 +19,7 @@ def random_walk():
     # p3 = p1.copy()
     # p3[:,0]+=4
     # print(p1.shape)
-    return  p1.shape[0],[p1,p2,p3]
+    return  p1.shape[0],[p1]
 
 
 def update_lines(num, walks, lines):
@@ -54,6 +53,6 @@ ax.set(zlim3d=(0, 2), zlabel='Z')
 ani = animation.FuncAnimation(
     fig, update_lines, num_steps, fargs=(walks, lines), interval=1)
 
-# plt.show()
-ani.save('decentralize.mp4',  
-          writer = 'ffmpeg', fps = 30)
+plt.show()
+# ani.save('decentralize.mp4',  
+#           writer = 'ffmpeg', fps = 30)
