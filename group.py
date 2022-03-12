@@ -113,11 +113,12 @@ def red():
     circle=Circle(startPoint=[0.3,1.02,1.7],center=[2,2,1.7]).getLinePoints(4*math.pi,time=4*16*t)
     path.append(circle)
     # fall_down
-    path.append(line_move(startPos=path[-1][-1], endPos=[0,2,1.5],time=5*t))
+    path.append(line_move(startPos=path[-1][-1], endPos=[0,2,1.5],time=8*t))
     # roundabout
     roundabout=Circle(startPoint=[0,2,1.5],center=[2,2,1.5]).getLinePoints(1.5*math.pi,time=24*t)
     path.append(roundabout)
     # toward_people
+    path.append(Stop(path[-1][-1],6*t))
     path.append(line_move(startPos=path[-1][-1], endPos=[2,1,1.5],time=5*t))
     return np.concatenate(path,axis=0)
 
@@ -129,12 +130,14 @@ def green():
     circle=Circle(startPoint=[2,3.4,1.7],center=[2,2,1.7]).getLinePoints(4*math.pi,time=4*16*t)
     path.append(circle)
     # fall_down
-    path.append(line_move(startPos=path[-1][-1], endPos=[0.6,2,1.5],time=5*t))
+    path.append(line_move(startPos=path[-1][-1], endPos=[0.8,2,1.5],time=8*t))
     # roundabout
-    roundabout=Circle(startPoint=[0.6,2,1.5],center=[2,2,1.5]).getLinePoints(1.5*math.pi,time=24*t)
+    roundabout=Circle(startPoint=[0.8,2,1.5],center=[2,2,1.5]).getLinePoints(1.5*math.pi,time=24*t)
     path.append(roundabout)
     # toward_people
+    path.append(Stop(path[-1][-1],3*t))
     path.append(line_move(startPos=path[-1][-1], endPos=[3,1,1.5],time=5*t))
+    path.append(Stop(path[-1][-1],3*t))
     return np.concatenate(path,axis=0)
 
 def blue():
@@ -145,12 +148,13 @@ def blue():
     circle=Circle(startPoint=[3.7,1.02,1.7],center=[2,2,1.7]).getLinePoints(4*math.pi,time=4*16*t)
     path.append(circle)
     # fall_down
-    path.append(line_move(startPos=path[-1][-1], endPos=[1.3,2,1.5],time=5*t))
+    path.append(line_move(startPos=path[-1][-1], endPos=[1.6,2,1.5],time=8*t))
     # roundabout
-    roundabout=Circle(startPoint=[1.3,2,1.5],center=[2,2,1.5]).getLinePoints(1.5*math.pi,time=24*t)
+    roundabout=Circle(startPoint=[1.6,2,1.5],center=[2,2,1.5]).getLinePoints(1.5*math.pi,time=24*t)
     path.append(roundabout)
     # toward_people
     path.append(line_move(startPos=path[-1][-1], endPos=[1,1,1.5],time=5*t))
+    path.append(Stop(path[-1][-1],6*t))
     return np.concatenate(path,axis=0)
     
 
@@ -240,8 +244,9 @@ if __name__ == '__main__':
     for p in [P_r,P_g,P_b]:
         # print(len(p))
         p[:,0:2]=(p[:,0:2]-2)/scale
-        bd_min.append(np.min(p,axis=0))
-        bd_max.append(np.max(p,axis=0))
+        p[:,1]=p[:,1]+0.2
+        # bd_min.append(np.min(p,axis=0))
+        # bd_max.append(np.max(p,axis=0))
     # print(np.min(np.array(bd_min),axis=0))
     # print(np.max(np.array(bd_max),axis=0))
 
@@ -253,16 +258,16 @@ if __name__ == '__main__':
     # show_ani()
     # shown_x_y_z()
 
-    # dir="./resource/centralize/"
-    # if not os.path.isdir(dir):
-    #     os.mkdir(dir)
+    dir="./resource/centralize/"
+    if not os.path.isdir(dir):
+        os.mkdir(dir)
 
-    # m1dic = {'pos_x_traj':P_r[:,1],'pos_y_traj':P_r[:,0],'pos_z_traj':P_r[:,2]}
-    # m2dic = {'pos_x_traj':P_g[:,1],'pos_y_traj':P_g[:,0],'pos_z_traj':P_g[:,2]}
-    # m3dic = {'pos_x_traj':P_b[:,1],'pos_y_traj':P_b[:,0],'pos_z_traj':P_b[:,2]}
+    m1dic = {'pos_x_traj':P_r[:,1],'pos_y_traj':P_r[:,0],'pos_z_traj':P_r[:,2]}
+    m2dic = {'pos_x_traj':P_g[:,1],'pos_y_traj':P_g[:,0],'pos_z_traj':P_g[:,2]}
+    m3dic = {'pos_x_traj':P_b[:,1],'pos_y_traj':P_b[:,0],'pos_z_traj':P_b[:,2]}
 
-    # savemat(dir+"p1.mat",m1dic)
-    # savemat(dir+"p2.mat",m2dic)
-    # savemat(dir+"p3.mat",m3dic)
+    savemat(dir+"p1.mat",m1dic)
+    savemat(dir+"p2.mat",m2dic)
+    savemat(dir+"p3.mat",m3dic)
 
 

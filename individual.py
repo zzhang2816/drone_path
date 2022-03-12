@@ -107,19 +107,19 @@ def Stop(startPos, time):
 
 def red():
     path=[]
-    # wait 6s
-    path.append(Stop([1,2,0.5],6*t))
+    # wait 7s
+    path.append(Stop([1,2,0.5],7*t))
     # take off
     path.append(line_move(startPos=[1,2,0.5], endPos=[3.2,3.2,1.7],time=5*t))
     # circle
     circle=Circle(startPoint=[3.2,3.2,1.7],center=[2,2,1.7]).getLinePoints(2*math.pi,time=(3.5*16-9)*t)
     path.append(circle)
     # fall_down
-    path.append(line_move(startPos=path[-1][-1], endPos=[0.45,3,1.4],time=5*t))
+    path.append(line_move(startPos=path[-1][-1], endPos=[0.65,3,1.4],time=8*t))
     # wait 3s
-    path.append(Stop([0.45,3,1.4],3*t))
+    path.append(Stop([0.65,3,1.4],2*t))
     # roundabout
-    roundabout=Circle(startPoint=[0.45,3,1.4],center=[2,2,1.4]).getLinePoints(1.5*math.pi,time=24*t)
+    roundabout=Circle(startPoint=[0.65,3,1.4],center=[2,2,1.4]).getLinePoints(1.5*math.pi,time=24*t)
     path.append(roundabout)
     # toward_people
     path.append(line_move(startPos=path[-1][-1], endPos=[3,1,1.5],time=5*t))
@@ -127,17 +127,17 @@ def red():
 
 def green():
     path=[]
-    # wait 3s
-    path.append(Stop([2,2,0.5],3*t))
+    # wait 4s
+    path.append(Stop([2,2,0.5],4*t))
     # take off
     path.append(line_move(startPos=[2,2,0.5], endPos=[3.4,3.4,1.7],time=5*t))
     # circle
-    circle=Circle(startPoint=[3.4,3.4,1.7],center=[2,2,1.7]).getLinePoints(2.5*math.pi,time=(3.5*16-3)*t)
+    circle=Circle(startPoint=[3.4,3.4,1.7],center=[2,2,1.7]).getLinePoints(2.5*math.pi,time=(3.5*16-4)*t)
     path.append(circle)
     # fall_down
-    path.append(line_move(startPos=path[-1][-1], endPos=[0,2,1.5],time=5*t))
+    path.append(line_move(startPos=path[-1][-1], endPos=[0.2,2,1.5],time=8*t))
     # roundabout
-    roundabout=Circle(startPoint=[0,2,1.5],center=[2,2,1.5]).getLinePoints(1.5*math.pi,time=24*t)
+    roundabout=Circle(startPoint=[0.2,2,1.5],center=[2,2,1.5]).getLinePoints(1.5*math.pi,time=24*t)
     path.append(roundabout)
     # toward_people
     path.append(line_move(startPos=path[-1][-1], endPos=[1,1,1.5],time=5*t))
@@ -151,9 +151,9 @@ def blue():
     circle=Circle(startPoint=[3.4,3.4,1.7],center=[2,2,1.7]).getLinePoints(3.5*math.pi,time=3.5*16*t)
     path.append(circle)
     # fall_down
-    path.append(line_move(startPos=path[-1][-1], endPos=[0.9,2,1.5],time=5*t))
+    path.append(line_move(startPos=path[-1][-1], endPos=[1.1,2,1.5],time=8*t))
     # roundabout
-    roundabout=Circle(startPoint=[0.9,2,1.5],center=[2,2,1.5]).getLinePoints(1.5*math.pi,time=24*t)
+    roundabout=Circle(startPoint=[1.1,2,1.5],center=[2,2,1.5]).getLinePoints(1.5*math.pi,time=24*t)
     path.append(roundabout)
     # toward_people
     path.append(line_move(startPos=path[-1][-1], endPos=[2,1,1.5],time=5*t))
@@ -214,13 +214,13 @@ def shown_x_y_z():
     ax1.plot(P_g[:,0],'g')
     ax1.plot(P_b[:,0],'b--')
     ax1.set_xlabel('t')
-    ax1.set_ylabel('x')
+    ax1.set_ylabel('y')
     ax2 = fig.add_subplot(312)
     ax2.plot(P_r[:,1],'r--')
     ax2.plot(P_g[:,1],'g')
     ax2.plot(P_b[:,1],'b--')
     ax2.set_xlabel('t')
-    ax2.set_ylabel('y')
+    ax2.set_ylabel('x')
     ax3 = fig.add_subplot(313)
     ax3.plot(P_r[:,-1],'r--')
     ax3.plot(P_g[:,-1],'g')
@@ -246,28 +246,30 @@ if __name__ == '__main__':
     for p in [P_r,P_g,P_b]:
         # print(len(p))
         p[:,0:2]=(p[:,0:2]-2)/scale
-        bd_min.append(np.min(p,axis=0))
-        bd_max.append(np.max(p,axis=0))
-    print(np.min(np.array(bd_min),axis=0))
-    print(np.max(np.array(bd_max),axis=0))
+        p[:,1]=p[:,1]+0.2
+    #     bd_min.append(np.min(p,axis=0))
+    #     bd_max.append(np.max(p,axis=0))
+    # print(np.min(np.array(bd_min),axis=0))
+    # print(np.max(np.array(bd_max),axis=0))
 
-    show_path()
+    # show_path()
 
-    print(get_dist(P_r,P_g))
-    print(get_dist(P_r,P_b))
-    print(get_dist(P_g,P_b))
-    # # show_ani()
+    # print(get_dist(P_r,P_g))
+    # print(get_dist(P_r,P_b))
+    # print(get_dist(P_g,P_b))
+    # show_ani()
+    # shown_x_y_z()
 
-    # dir="./resource/decentralize/"
-    # if not os.path.isdir(dir):
-    #     os.mkdir(dir)
+    dir="./resource/decentralize/"
+    if not os.path.isdir(dir):
+        os.mkdir(dir)
 
-    # m1dic = {'pos_x_traj':P_r[:,1],'pos_y_traj':P_r[:,0],'pos_z_traj':P_r[:,2]}
-    # m2dic = {'pos_x_traj':P_g[:,1],'pos_y_traj':P_g[:,0],'pos_z_traj':P_g[:,2]}
-    # m3dic = {'pos_x_traj':P_b[:,1],'pos_y_traj':P_b[:,0],'pos_z_traj':P_b[:,2]}
+    m1dic = {'pos_x_traj':P_r[:,1],'pos_y_traj':P_r[:,0],'pos_z_traj':P_r[:,2]}
+    m2dic = {'pos_x_traj':P_g[:,1],'pos_y_traj':P_g[:,0],'pos_z_traj':P_g[:,2]}
+    m3dic = {'pos_x_traj':P_b[:,1],'pos_y_traj':P_b[:,0],'pos_z_traj':P_b[:,2]}
 
-    # savemat(dir+"p1.mat",m1dic)
-    # savemat(dir+"p2.mat",m2dic)
-    # savemat(dir+"p3.mat",m3dic)
+    savemat(dir+"p1.mat",m1dic)
+    savemat(dir+"p2.mat",m2dic)
+    savemat(dir+"p3.mat",m3dic)
 
 
