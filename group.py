@@ -105,58 +105,36 @@ def Stop(startPos, time):
     sp = np.array([startPos])
     return np.repeat(sp,time2intp(time),axis=0)
 
-def red():
-    path=[]
-    # take off
-    path.append(line_move(startPos=[1,2,0.5], endPos=[0.3,1.02,1.7],time=5*t))
-    # circle
-    circle=Circle(startPoint=[0.3,1.02,1.7],center=[2,2,1.7]).getLinePoints(4*math.pi,time=4*16*t)
-    path.append(circle)
-    # fall_down
-    path.append(line_move(startPos=path[-1][-1], endPos=[0,2,1.5],time=8*t))
-    # roundabout
-    roundabout=Circle(startPoint=[0,2,1.5],center=[2,2,1.5]).getLinePoints(1.5*math.pi,time=24*t)
-    path.append(roundabout)
-    # toward_people
-    path.append(Stop(path[-1][-1],6*t))
-    path.append(line_move(startPos=path[-1][-1], endPos=[2,1,1.5],time=5*t))
-    return np.concatenate(path,axis=0)
-
 def green():
     path=[]
     # take off
-    path.append(line_move(startPos=[2,2,0.5], endPos=[2,3.4,1.7],time=5*t))
+    path.append(line_move(startPos=[2,2,0.5], endPos=[2.5,2.5,1.7],time=5*t))
     # circle
-    circle=Circle(startPoint=[2,3.4,1.7],center=[2,2,1.7]).getLinePoints(4*math.pi,time=4*16*t)
+    circle=Circle(startPoint=[2.5,2.5,1.7],center=[2,2,1.7]).getLinePoints(0.7*math.pi,time=0.7*16*t)
     path.append(circle)
     # fall_down
-    path.append(line_move(startPos=path[-1][-1], endPos=[0.8,2,1.5],time=8*t))
-    # roundabout
-    roundabout=Circle(startPoint=[0.8,2,1.5],center=[2,2,1.5]).getLinePoints(1.5*math.pi,time=24*t)
-    path.append(roundabout)
-    # toward_people
-    path.append(Stop(path[-1][-1],3*t))
-    path.append(line_move(startPos=path[-1][-1], endPos=[3,1,1.5],time=5*t))
-    path.append(Stop(path[-1][-1],3*t))
-    return np.concatenate(path,axis=0)
-
-def blue():
-    path=[]
+    endpos=path[-1][-1];path.append(line_move(startPos=endpos, endPos=[endpos[0],endpos[1],0.8],time=3*t))
+    # stop
+    path.append(Stop(path[-1][-1],2*t))
     # take off
-    path.append(line_move(startPos=[3,2,0.5], endPos=[3.7,1.02,1.7],time=5*t))
+    endpos=path[-1][-1];path.append(line_move(startPos=path[-1][-1], endPos=[endpos[0],endpos[1],1.2],time=2*t))
     # circle
-    circle=Circle(startPoint=[3.7,1.02,1.7],center=[2,2,1.7]).getLinePoints(4*math.pi,time=4*16*t)
+    circle=Circle(startPoint=path[-1][-1],center=[2,2,1.2]).getLinePoints(1*math.pi,time=(1*16+3)*t)
     path.append(circle)
     # fall_down
-    path.append(line_move(startPos=path[-1][-1], endPos=[1.6,2,1.5],time=8*t))
-    # roundabout
-    roundabout=Circle(startPoint=[1.6,2,1.5],center=[2,2,1.5]).getLinePoints(1.5*math.pi,time=24*t)
-    path.append(roundabout)
-    # toward_people
-    path.append(line_move(startPos=path[-1][-1], endPos=[1,1,1.5],time=5*t))
-    path.append(Stop(path[-1][-1],6*t))
+    path.append(line_move(startPos=path[-1][-1], endPos=[3.5,1.5,1.2],time=3*t))
+    endpos=path[-1][-1];path.append(line_move(startPos=endpos, endPos=[endpos[0],endpos[1],0.8],time=2*t))
+    # wait 2s
+    path.append(Stop(path[-1][-1],2*t))
+    # take off
+    endpos=path[-1][-1];path.append(line_move(startPos=path[-1][-1], endPos=[3.2,1.5,1.3],time=3*t))
+    # move
+    path.append(line_move(startPos=path[-1][-1], endPos=[3,3.5,1.3],time=3*t))
+    # fall_down
+    endpos=path[-1][-1];path.append(line_move(startPos=endpos, endPos=[endpos[0],endpos[1],0.8],time=2*t))
     return np.concatenate(path,axis=0)
     
+ 
 
 def toward_people(p1, p2, p3):
     p1_start=p1[-1][-1]
@@ -212,13 +190,13 @@ def shown_x_y_z():
     ax1.plot(P_g[:,0],'g')
     ax1.plot(P_b[:,0],'b--')
     ax1.set_xlabel('t')
-    ax1.set_ylabel('x')
+    ax1.set_ylabel('y')
     ax2 = fig.add_subplot(312)
     ax2.plot(P_r[:,1],'r--')
     ax2.plot(P_g[:,1],'g')
     ax2.plot(P_b[:,1],'b--')
     ax2.set_xlabel('t')
-    ax2.set_ylabel('y')
+    ax2.set_ylabel('x')
     ax3 = fig.add_subplot(313)
     ax3.plot(P_r[:,-1],'r--')
     ax3.plot(P_g[:,-1],'g')
@@ -230,33 +208,37 @@ def shown_x_y_z():
 if __name__ == '__main__':
     t=1 # decrease the time to speed up 50 interpolation per second
     stop_time=1
-    scale=1.9
+    scale=2
 
-    print("red")
-    P_r = red()
     print("green")
-    P_g = green()
+    P_b = green()
+    print("red")
+    P_r = P_b.copy()
+    P_r[:,0]=P_r[:,0]-0.7
+    P_r[:,1]=P_r[:,1]-0.8
     print("blue")
-    P_b = blue()
+    P_g = P_b.copy()
+    P_b[:,0]=P_b[:,0]+0.7
+    P_b[:,1]=P_b[:,1]-0.8
+    
 
     bd_min=[]
     bd_max=[]
     for p in [P_r,P_g,P_b]:
-        # print(len(p))
         p[:,0:2]=(p[:,0:2]-2)/scale
         p[:,1]=p[:,1]+0.2
-        # bd_min.append(np.min(p,axis=0))
-        # bd_max.append(np.max(p,axis=0))
-    # print(np.min(np.array(bd_min),axis=0))
-    # print(np.max(np.array(bd_max),axis=0))
+        bd_min.append(np.min(p,axis=0))
+        bd_max.append(np.max(p,axis=0))
+    print(np.min(np.array(bd_min),axis=0))
+    print(np.max(np.array(bd_max),axis=0))
 
-    show_path()
+    # show_path()
 
     print(get_dist(P_r,P_g))
     print(get_dist(P_r,P_b))
     print(get_dist(P_g,P_b))
     # show_ani()
-    # shown_x_y_z()
+    shown_x_y_z()
 
     dir="./resource/centralize/"
     if not os.path.isdir(dir):

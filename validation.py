@@ -32,7 +32,7 @@ def convert(data):
     z=np.array(data['pos_z_traj']).reshape(-1)
     return np.stack([x,y,z]).T
 
-path = 'resource/centralize/'
+path = 'resource/decentralize/'
 dataFiles=['p1.mat','p2.mat','p3.mat']
 trajs=[]
 

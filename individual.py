@@ -11,45 +11,6 @@ def get_dist(a,b):
     # print(np.argmin(dist))
     return np.sqrt(np.min(dist))
     
-class Bezier:
-    # 输入控制点，Points是一个array,num是控制点间的插补个数
-    def __init__(self,Points,InterpolationNum):
-        self.demension=Points.shape[1]   # 点的维度
-        self.order=Points.shape[0]-1     # 贝塞尔阶数=控制点个数-1
-        self.num=InterpolationNum        # 相邻控制点的插补个数
-        self.pointsNum=Points.shape[0]   # 控制点的个数
-        self.Points=Points
-        
-    # 获取Bezeir所有插补点
-    def getBezierPoints(self,method):
-        if method==0:
-            return self.DigitalAlgo()
-        if method==1:
-            return self.DeCasteljauAlgo()
-    
-    # 数值解法
-    def DigitalAlgo(self):
-        PB=np.zeros((self.pointsNum,self.demension)) # 求和前各项
-        pis =[]                                      # 插补点
-        for u in np.arange(0,1+1/self.num,1/self.num):
-            for i in range(0,self.pointsNum):
-                PB[i]=(math.factorial(self.order)/(math.factorial(i)*math.factorial(self.order-i)))*(u**i)*(1-u)**(self.order-i)*self.Points[i]
-            pi=sum(PB).tolist()                      #求和得到一个插补点
-            pis.append(pi)            
-        return np.array(pis)
-
-    # 德卡斯特里奥解法
-    def DeCasteljauAlgo(self):
-        pis =[]                          # 插补点
-        for u in np.arange(0,1+1/self.num,1/self.num):
-            Att=self.Points
-            for i in np.arange(0,self.order):
-                for j in np.arange(0,self.order-i):
-                    Att[j]=(1.0-u)*Att[j]+u*Att[j+1]
-            pis.append(Att[0].tolist())
-
-        return np.array(pis)
-
 class Circle:
     def __init__(self,startPoint, center):
         self.radius = math.sqrt((startPoint[0] - center[0])**2+(startPoint[1] - center[1])**2)
@@ -81,16 +42,7 @@ class Circle:
         return np.stack((x,y,z)).T
 
 def time2intp(t):
-    return int(100*t)
-
-def Bezier_up(startPos,endPos,time):
-    midPos=[startPos[0],endPos[1],startPos[2]]
-    BezierPoints=np.array([
-        startPos,
-        midPos,
-        endPos
-        ])
-    return Bezier(BezierPoints,time2intp(time)).getBezierPoints(0)
+    return int(10*t)
 
 def line_move(startPos,endPos,time):
     speed = (np.array(endPos)-np.array(startPos))/time
@@ -107,69 +59,96 @@ def Stop(startPos, time):
 
 def red():
     path=[]
-    # wait 7s
-    path.append(Stop([1,2,0.5],7*t))
+    # wait 6s
+    path.append(Stop([1,2,0.5],6*t))
     # take off
-    path.append(line_move(startPos=[1,2,0.5], endPos=[3.2,3.2,1.7],time=5*t))
+    path.append(line_move(startPos=[1,2,0.5], endPos=[1,2,1.7],time=3*t))
+    path.append(line_move(startPos=[1,2,1.7], endPos=[2.8,2.8,1.7],time=6*t))
     # circle
-    circle=Circle(startPoint=[3.2,3.2,1.7],center=[2,2,1.7]).getLinePoints(2*math.pi,time=(3.5*16-9)*t)
+    circle=Circle(startPoint=[2.8,2.8,1.7],center=[2,2,1.7]).getLinePoints(0.7*math.pi,time=0.7*16*t)
     path.append(circle)
     # fall_down
-    path.append(line_move(startPos=path[-1][-1], endPos=[0.65,3,1.4],time=8*t))
-    # wait 3s
-    path.append(Stop([0.65,3,1.4],2*t))
-    # roundabout
-    roundabout=Circle(startPoint=[0.65,3,1.4],center=[2,2,1.4]).getLinePoints(1.5*math.pi,time=24*t)
-    path.append(roundabout)
-    # toward_people
-    path.append(line_move(startPos=path[-1][-1], endPos=[3,1,1.5],time=5*t))
+    endpos=path[-1][-1];path.append(line_move(startPos=endpos, endPos=[endpos[0],endpos[1],0.8],time=3*t))
+    # stop
+    path.append(Stop(path[-1][-1],2*t))
+    # take off
+    endpos=path[-1][-1];path.append(line_move(startPos=path[-1][-1], endPos=[endpos[0],endpos[1],1.3],time=2*t))
+    # circle
+    circle=Circle(startPoint=path[-1][-1],center=[2,2,1.3]).getLinePoints(0.5*math.pi,time=0.5*16*t)
+    path.append(circle)
+    # fall_down
+    path.append(line_move(startPos=path[-1][-1], endPos=[1.7,1.5,1.3],time=3*t))
+    endpos=path[-1][-1];path.append(line_move(startPos=endpos, endPos=[endpos[0],endpos[1],0.8],time=2*t))
+    # wait 2s
+    path.append(Stop(path[-1][-1],2*t))
+    # take off
+    path.append(line_move(startPos=path[-1][-1], endPos=[1,2,1.3],time=3*t))
+    # move
+    path.append(line_move(startPos=path[-1][-1], endPos=[1,3.5,1.3],time=5*t))
+    # fall_down
+    endpos=path[-1][-1];path.append(line_move(startPos=endpos, endPos=[endpos[0],endpos[1],0.8],time=2*t))
     return np.concatenate(path,axis=0)
 
 def green():
     path=[]
-    # wait 4s
-    path.append(Stop([2,2,0.5],4*t))
+    # wait 3s
+    path.append(Stop([2,2,0.5],2*t))
     # take off
-    path.append(line_move(startPos=[2,2,0.5], endPos=[3.4,3.4,1.7],time=5*t))
+    path.append(line_move(startPos=[2,2,0.5], endPos=[2,2,1.5],time=3*t))
+    path.append(line_move(startPos=[2,2,1.5], endPos=[3.2,3.2,1.7],time=5*t))
     # circle
-    circle=Circle(startPoint=[3.4,3.4,1.7],center=[2,2,1.7]).getLinePoints(2.5*math.pi,time=(3.5*16-4)*t)
+    circle=Circle(startPoint=[3.2,3.2,1.7],center=[2,2,1.7]).getLinePoints(0.5*math.pi,time=0.5*16*t)
     path.append(circle)
     # fall_down
-    path.append(line_move(startPos=path[-1][-1], endPos=[0.2,2,1.5],time=8*t))
-    # roundabout
-    roundabout=Circle(startPoint=[0.2,2,1.5],center=[2,2,1.5]).getLinePoints(1.5*math.pi,time=24*t)
-    path.append(roundabout)
-    # toward_people
-    path.append(line_move(startPos=path[-1][-1], endPos=[1,1,1.5],time=5*t))
+    endpos=path[-1][-1];path.append(line_move(startPos=endpos, endPos=[endpos[0],endpos[1],0.8],time=3*t))
+    # stop
+    path.append(Stop(path[-1][-1],2*t))
+    # take off
+    endpos=path[-1][-1];path.append(line_move(startPos=path[-1][-1], endPos=[endpos[0],endpos[1],1.5],time=3*t))
+    # circle
+    circle=Circle(startPoint=path[-1][-1],center=[2,2,1.5]).getLinePoints(0.95*math.pi,time=0.95*16*t)
+    path.append(circle)
+    # fall_down
+    path.append(line_move(startPos=path[-1][-1], endPos=[2.5,1.5,1.4],time=3*t))
+    endpos=path[-1][-1];path.append(line_move(startPos=endpos, endPos=[endpos[0],endpos[1],0.8],time=2*t))
+    # wait 2s
+    path.append(Stop(path[-1][-1],2*t))
+    # take off
+    endpos=path[-1][-1];path.append(line_move(startPos=path[-1][-1], endPos=[2.5,1.5,1.3],time=3*t))
+    # move
+    path.append(line_move(startPos=path[-1][-1], endPos=[2,3.5,1.3],time=5*t))
+    # fall_down
+    endpos=path[-1][-1];path.append(line_move(startPos=endpos, endPos=[endpos[0],endpos[1],0.8],time=2*t))
     return np.concatenate(path,axis=0)
 
 def blue():
     path=[]
     # take off
-    path.append(line_move(startPos=[3,2,0.5], endPos=[3.4,3.4,1.7],time=5*t))
+    path.append(line_move(startPos=[3,2,0.5], endPos=[3.2,3.2,1.7],time=5*t))
     # circle
-    circle=Circle(startPoint=[3.4,3.4,1.7],center=[2,2,1.7]).getLinePoints(3.5*math.pi,time=3.5*16*t)
+    circle=Circle(startPoint=[3.2,3.2,1.7],center=[2,2,1.7]).getLinePoints(0.7*math.pi,time=0.7*16*t)
     path.append(circle)
     # fall_down
-    path.append(line_move(startPos=path[-1][-1], endPos=[1.1,2,1.5],time=8*t))
-    # roundabout
-    roundabout=Circle(startPoint=[1.1,2,1.5],center=[2,2,1.5]).getLinePoints(1.5*math.pi,time=24*t)
-    path.append(roundabout)
-    # toward_people
-    path.append(line_move(startPos=path[-1][-1], endPos=[2,1,1.5],time=5*t))
+    endpos=path[-1][-1];path.append(line_move(startPos=endpos, endPos=[endpos[0],endpos[1],0.8],time=3*t))
+    # stop
+    path.append(Stop(path[-1][-1],2*t))
+    # take off
+    endpos=path[-1][-1];path.append(line_move(startPos=path[-1][-1], endPos=[endpos[0],endpos[1],1.2],time=2*t))
+    # circle
+    circle=Circle(startPoint=path[-1][-1],center=[2,2,1.2]).getLinePoints(1*math.pi,time=(1*16+3)*t)
+    path.append(circle)
+    # fall_down
+    path.append(line_move(startPos=path[-1][-1], endPos=[3.5,1.5,1.2],time=3*t))
+    endpos=path[-1][-1];path.append(line_move(startPos=endpos, endPos=[endpos[0],endpos[1],0.8],time=2*t))
+    # wait 2s
+    path.append(Stop(path[-1][-1],2*t))
+    # take off
+    endpos=path[-1][-1];path.append(line_move(startPos=path[-1][-1], endPos=[3.2,1.5,1.3],time=3*t))
+    # move
+    path.append(line_move(startPos=path[-1][-1], endPos=[3,3.5,1.3],time=5*t))
+    # fall_down
+    endpos=path[-1][-1];path.append(line_move(startPos=endpos, endPos=[endpos[0],endpos[1],0.8],time=2*t))
     return np.concatenate(path,axis=0)
-    
-
-def toward_people(p1, p2, p3):
-    p1_start=p1[-1][-1]
-    p2_start=p2[-1][-1]
-    p3_start=p3[-1][-1]
-    end_point = [2,1,1.5]
-    rel_pos=np.array(end_point)-np.array(p1_start)
-    p1.append(np.linspace(p1_start, end_point,250))
-    p2.append(np.linspace(p2_start, p2_start+rel_pos,250))
-    p3.append(np.linspace(p3_start, p3_start+rel_pos,250))
-    return p1, p2, p3
 
 def show_path():
     fig=plt.figure()
@@ -244,32 +223,32 @@ if __name__ == '__main__':
     bd_min=[]
     bd_max=[]
     for p in [P_r,P_g,P_b]:
-        # print(len(p))
-        p[:,0:2]=(p[:,0:2]-2)/scale
+        print(len(p))
+        p[:,0:2]=(p[:,0:2]-2)/scale 
         p[:,1]=p[:,1]+0.2
     #     bd_min.append(np.min(p,axis=0))
     #     bd_max.append(np.max(p,axis=0))
     # print(np.min(np.array(bd_min),axis=0))
     # print(np.max(np.array(bd_max),axis=0))
 
-    # show_path()
+    print(get_dist(P_r,P_g))
+    print(get_dist(P_r,P_b))
+    print(get_dist(P_g,P_b))
 
-    # print(get_dist(P_r,P_g))
-    # print(get_dist(P_r,P_b))
-    # print(get_dist(P_g,P_b))
     # show_ani()
+    show_path()
     # shown_x_y_z()
 
-    dir="./resource/decentralize/"
-    if not os.path.isdir(dir):
-        os.mkdir(dir)
+    # dir="./resource/decentralize/"
+    # if not os.path.isdir(dir):
+    #     os.mkdir(dir)
 
-    m1dic = {'pos_x_traj':P_r[:,1],'pos_y_traj':P_r[:,0],'pos_z_traj':P_r[:,2]}
-    m2dic = {'pos_x_traj':P_g[:,1],'pos_y_traj':P_g[:,0],'pos_z_traj':P_g[:,2]}
-    m3dic = {'pos_x_traj':P_b[:,1],'pos_y_traj':P_b[:,0],'pos_z_traj':P_b[:,2]}
+    # m1dic = {'pos_x_traj':P_r[:,1],'pos_y_traj':P_r[:,0],'pos_z_traj':P_r[:,2]}
+    # m2dic = {'pos_x_traj':P_g[:,1],'pos_y_traj':P_g[:,0],'pos_z_traj':P_g[:,2]}
+    # m3dic = {'pos_x_traj':P_b[:,1],'pos_y_traj':P_b[:,0],'pos_z_traj':P_b[:,2]}
 
-    savemat(dir+"p1.mat",m1dic)
-    savemat(dir+"p2.mat",m2dic)
-    savemat(dir+"p3.mat",m3dic)
+    # savemat(dir+"p1.mat",m1dic)
+    # savemat(dir+"p2.mat",m2dic)
+    # savemat(dir+"p3.mat",m3dic)
 
 
